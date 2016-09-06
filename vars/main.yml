@@ -1,0 +1,4 @@
+---
+# vars file for ansible-atop
+atop_packages:
+  - atop

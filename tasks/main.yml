@@ -1,0 +1,18 @@
+---
+# tasks file for ansible-atop
+
+- block:
+    - name: Install atop packages
+      become: yes
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+        cache_valid_time: "{{ apt_cache_valid_time | default(omit) }}"
+        install_recommends: no
+      with_items:
+        - "{{ atop_packages }}"
+        
+  become: yes
+  tags:
+    - atop
