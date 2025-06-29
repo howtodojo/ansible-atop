@@ -13,6 +13,15 @@
   tags:
     - atop
 
+- name: Enable EPEL repository on RHEL-based systems
+  become: true
+  package:
+    name: epel-release
+    state: present
+  when: ansible_os_family == "RedHat"
+  tags:
+    - atop
+
 - name: Install atop packages on RHEL/CentOS/AlmaLinux/Rocky Linux systems
   become: true
   package:
