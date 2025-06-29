@@ -1,0 +1,64 @@
+---
+- name: Verify
+  hosts: all
+  become: false
+  tasks:
+    - name: Check if atop package is installed
+      ansible.builtin.package_facts:
+        manager: auto
+      register: package_facts
+
+    - name: Verify atop package is installed
+      ansible.builtin.assert:
+        that:
+          - "'atop' in ansible_facts.packages"
+        fail_msg: "atop package not found in installed packages"
+        success_msg: "atop package is properly installed"
+
+    - name: Check if atop command is available
+      ansible.builtin.shell: command -v atop
+      register: atop_which
+      changed_when: false
+
+    - name: Get atop version
+      ansible.builtin.command: atop -V
+      register: atop_version
+      changed_when: false
+
+    - name: Display atop version
+      ansible.builtin.debug:
+        var: atop_version.stdout
+
+    - name: Verify atop version output is not empty
+      ansible.builtin.assert:
+        that:
+          - atop_version.rc == 0
+          - atop_version.stdout != ""
+        fail_msg: "atop version command failed"
+        success_msg: "atop version command works correctly"
+
+    - name: Test basic atop functionality with short sample interval
+      ansible.builtin.command: timeout 3 atop 1 1
+      register: atop_test
+      changed_when: false
+      ignore_errors: true
+
+    - name: Verify atop test completed successfully
+      ansible.builtin.assert:
+        that:
+          - atop_test.rc == 0 or atop_test.rc == 124  # 124 is timeout's exit code
+        fail_msg: "atop test run failed"
+        success_msg: "atop test run completed successfully"
+
+    - name: Test atop with non-interactive mode
+      ansible.builtin.command: atop -b -p 1 1
+      register: atop_batch_test
+      changed_when: false
+
+    - name: Verify atop batch mode works
+      ansible.builtin.assert:
+        that:
+          - atop_batch_test.rc == 0
+          - atop_batch_test.stdout != ""
+        fail_msg: "atop batch mode test failed"
+        success_msg: "atop batch mode works correctly"

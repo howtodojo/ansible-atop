@@ -1,0 +1,25 @@
+---
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: "${MOLECULE_DISTRO:-ubuntu:22.04}"
+    pre_build_image: true
+    command: /bin/bash -c "while true; do sleep 30; done"
+    tmpfs:
+      - /run
+      - /tmp
+provisioner:
+  name: ansible
+  inventory:
+    host_vars:
+      instance:
+        ansible_distribution: "${MOLECULE_ANSIBLE_DISTRIBUTION:-Ubuntu}"
+        ansible_distribution_release: "${MOLECULE_ANSIBLE_RELEASE:-jammy}"
+        ansible_distribution_major_version: "${MOLECULE_ANSIBLE_VERSION:-22}"
+        ansible_os_family: "${MOLECULE_ANSIBLE_OS_FAMILY:-Debian}"
+        ansible_connection: docker
+        ansible_user: root
+        ansible_become: false
+verifier:
+  name: ansible

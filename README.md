@@ -1,7 +1,7 @@
 atop
 =========
 
-[![Build Status](https://travis-ci.org/howtodojo/ansible-atop.svg?branch=master)](https://travis-ci.org/howtodojo/ansible-atop)
+![](https://github.com/howtodojo/ansible-atop/actions/workflows/ci.yml/badge.svg)
 
 This role will install atop
 

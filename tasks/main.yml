@@ -1,18 +1,23 @@
 ---
 # tasks file for ansible-atop
 
-- block:
-    - name: Install atop packages
-      become: yes
-      apt:
-        name: "{{ item }}"
-        state: present
-        update_cache: yes
-        cache_valid_time: "{{ apt_cache_valid_time | default(omit) }}"
-        install_recommends: no
-      with_items:
-        - "{{ atop_packages }}"
-        
-  become: yes
+- name: Install atop packages on Debian/Ubuntu systems
+  become: true
+  apt:
+    name: "{{ atop_packages }}"
+    state: present
+    update_cache: true
+    cache_valid_time: "{{ apt_cache_valid_time | default(omit) }}"
+    install_recommends: false
+  when: ansible_os_family == "Debian"
+  tags:
+    - atop
+
+- name: Install atop packages on RHEL/CentOS/AlmaLinux/Rocky Linux systems
+  become: true
+  package:
+    name: "{{ atop_packages }}"
+    state: present
+  when: ansible_os_family == "RedHat"
   tags:
     - atop

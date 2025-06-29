@@ -1,4 +1,13 @@
 ---
 # vars file for ansible-atop
-atop_packages:
+
+# Default packages for Debian/Ubuntu
+atop_packages_debian:
   - atop
+
+# Default packages for RHEL/CentOS/AlmaLinux/Rocky Linux
+atop_packages_redhat:
+  - atop
+
+# Set the appropriate package list based on OS family
+atop_packages: "{{ atop_packages_debian if ansible_os_family == 'Debian' else atop_packages_redhat }}"
